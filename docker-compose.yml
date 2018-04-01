@@ -1,0 +1,28 @@
+version: '2'
+services:
+  openldap:
+    image: osixia/openldap:1.1.9
+    container_name: openldap
+    environment:
+    - LDAP_ORGANISATION=Mickael Kerjean
+    - LDAP_DOMAIN=kerjean.me
+    - LDAP_READONLY_USER=true
+    restart: always
+    volumes:
+    - ./data/db:/var/lib/ldap
+    - ./data/config:/etc/ldap/slapd.d
+    ports:
+    - "389:389"
+    - "636:636"
+
+  phpldapadmin:
+    build: ./img
+    container_name: openldap_admin
+    restart: always
+    environment:
+    - LDAP_SERVER_HOST=openldap
+    - LDAP_BASE=dc=kerjean,dc=me
+    ports:
+    - "127.0.0.1:10016:80"
+    depends_on:    
+    - openldap
