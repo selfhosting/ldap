@@ -1,8 +1,8 @@
 version: '2'
 services:
-  openldap:
+  ldap:
     image: osixia/openldap:1.1.9
-    container_name: openldap
+    container_name: ldap
     environment:
     - LDAP_ORGANISATION=Mickael Kerjean
     - LDAP_DOMAIN=kerjean.me
@@ -14,15 +14,22 @@ services:
     ports:
     - "389:389"
     - "636:636"
+    networks:
+    - authentication
+    - default
 
-  phpldapadmin:
+  ldapadmin:
     build: ./img
-    container_name: openldap_admin
+    container_name: ldap_admin
     restart: always
     environment:
-    - LDAP_SERVER_HOST=openldap
+    - LDAP_SERVER_HOST=ldap
     - LDAP_BASE=dc=kerjean,dc=me
     ports:
     - "127.0.0.1:10016:80"
     depends_on:    
-    - openldap
+    - ldap
+
+networks:
+  authentication:
+    external: true
